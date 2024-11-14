@@ -15,20 +15,32 @@
 #define trigger 7
 #define echo 8
 
-UltraSonicDistanceSensor distanceSensor(trigger, echo);
+UltraSonicDistanceSensor distanciaSonar(trigger, echo);
+
+int infraEsq = digitalRead(infraE);
+int infaDir = digitalRead(infraD);
+
+int sonar = distanciaSonar.measureDistanceCM()
+
 
 void setup()
 {
+  //Motores
   pinMode(motorEsquerdo1, OUTPUT);
   pinMode(motorEsquerdo2, OUTPUT);
   pinMode(motorDireito1, OUTPUT);
   pinMode(motorDireito2, OUTPUT);
 
+  //Sensores infravermelhos
   pinMode(infraE, INPUT);
   pinMode(InfraD, INPUT);
 
+  //Sensor UltraSonico
   pinMode(trigger, INPUT);
   pinMode(echo, INPUT);
+  
+  //Comunicação por bps
+  Serial.begin(9600);
 }
 
 void motores(int e1,int e2,int d1,int d2)
@@ -64,18 +76,25 @@ void giradaSonar(){
   delay(1000);
 }
 
-
-
 void loop()
 {
-  /*incluir if de sensor infra
-  frente();
-  delay(1000); // Wait for 1000 millisecond(s)
-  re();
-  delay(1000); // Wait for 1000 millisecond(s)
- */
-  
-  /*incluir if do sonar
-  giradaSonar();
-  */
+  if(infraEsq && infraDir){
+    if(sonar <= 40){
+      frente();
+    else(){
+      giradaSonar();
+    }
+  else if(infraEsq){
+    direita();
+  }
+  else if(infraDir){
+    esquerda();
+  }
+  else{
+    re();
+    delay(1500);
+    esquerda();
+    delay(2000);
+  }
+    
 }
